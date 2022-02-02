@@ -3,6 +3,15 @@ const nanoid  = require('nanoid').nanoid
 const axios = require('axios')
 const Url = require("../database/schema")
 
+const env_config = process.env
+
+const base = env_config.BASE_URL
+const port = env_config.PORT
+const currentEnvironment = env_config.ENV
+const homeUrl = currentEnvironment === "dev" ? base + ":" + port : base
+
+const config = { base, port, currentEnvironment, homeUrl }
+
 
 const router = express.Router();
 
@@ -20,25 +29,24 @@ router.get("/:urlId", async (request, response) => {
             return response.redirect(url.originalUrl)
         }
         else {
-            return response.status(404).json("url not found")
+            return response.render('home', {result: null, error: "An error occurred. Try again!", config})
         }
     }
     catch (e) {
-
+        return response.render('home', {result: null, error: "An error occurred. Try again!", config})
     }
 })
 
 router.post("/", async (request, response) => {
     const {originalUrl} = request.body
-    const base = process.env.BASE_URL
-    // const port = process.env.PORT
+
     const urlId = nanoid()
-    const shortUrl = `${base}/${urlId}`
-    // return response.json(request.body)
+
+    const shortUrl = currentEnvironment !== "dev" ? `${base}/${urlId}` : `${base}:${port}/${urlId}`
     try {
         let url = await Url.findOne({ originalUrl })
         if (url) {
-            return response.render('home', {result: url.shortUrl, error: null})
+            return response.render('home', {result: url.shortUrl, error: null, config})
         }
         else {
             const check = await axios.get(originalUrl)
@@ -49,11 +57,11 @@ router.post("/", async (request, response) => {
                 date: new Date()
             })
             await url.save()
-            response.render('home', {result: shortUrl, error: null})
+            response.render('home', {result: shortUrl, error: null, config})
         }
     }
     catch (e) {
-        response.render('home', {result: null, error: "An error occurred. Try again!"})
+        response.render('home', {result: null, error: "An error occurred. Try again!", config})
 
     }
 })
