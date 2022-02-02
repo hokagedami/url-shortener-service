@@ -12,6 +12,11 @@ const app = express()
 
 const PORT = process.env.PORT || 5000
 
+// app.set('view engine', 'pug')
+app.set('views', './public')
+app.set('view engine', 'ejs')
+app.use(express.static('public'))
+
 app.use(morgan('dev'));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());

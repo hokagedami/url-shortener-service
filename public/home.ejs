@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <title>URL Shortener</title>
+    <meta name="description"
+          content="ShortURL is a url shortener to reduce a long link. Use our tool to shorten links and then share them, in addition you can monitor traffic statistics.">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="style.css">
+    <link rel="shortcut icon" href="icons/http.png">
+    <meta property="og:title" content="ShortenURL - URL Shortener">
+    <meta property="og:url" content="http://localhost:5000/">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="http://localhost:5000/icons/http.png">
+</head>
+<body>
+<header>
+    <div id="logo"><a href="http://localhost:5000/" class="logo">Shorten URL</a></div>
+</header>
+<main>
+    <%if(!error){ %>
+    <section id="urlbox">
+        <h1>Paste the URL to be shortened</h1>
+        <form method="post" id="form">
+            <div class="formurl">
+                <label>
+                    <input id="originalUrl" type="text" name="originalUrl" oninput="disableResultView()" required>
+                </label>
+                <div class="formbutton">
+                    <input type="submit" value="Shorten URL">
+                </div>
+            </div>
+        </form>
+        <p class="boxtextcenter">A free tool to shorten a URL or reduce a link<br>Use our URL Shortener to create a
+            shortened link making it easy to remember</p>
+    </section>
+    <%}%>
+    <% if (result) {%>
+    <div id="result">
+        <section id="resultbox">
+            <br><br>
+            <div class="formurl" style="max-width: 400px;">
+                <label for="shortenurl"></label><input id="shortenurl" type="text" value="<%= result %>" onClick="">
+                <div class="formbutton">
+                    <input type="button" data-clipboard-target="#shortenurl" class="copy" value="Copy URL" onclick="">
+                </div>
+            </div>
+            <div id="formurl" style="max-width: 70%; display: block;">
+                <div id="balloon" style="display: none">URL Copied</div>
+            </div>
+        </section>
+    </div>
+    <%}%>
+
+    <%if (error) { %>
+        <section id="content">
+            <h1>An error occurred!</h1>
+            <p>The <b>URL is not valid</b>, make sure the URL you tried to shorten is correct.</p>
+            <p>Possible errors:</p>
+            <ul>
+                <li class="list">Check if the domain is correct</li>
+                <li class="list">Check if the site is online</li>
+                <li class="list">Check the length of the url is not too small</li>
+                <li class="list">Check the address bars and punctuation</li>
+                <li class="list">The URL may have been blocked</li>
+                <li class="list">The url may have been reported</li>
+                <li class="list">Make sure the url does not contain spam</li>
+            </ul>
+            <p><a href="http://localhost:5000/" class="colorbutton">
+                        <img src="./icons/icon-back.png" alt="back icon" style="height: 30px; width: 30px"> Go Back</a></p>
+        </section>
+    <% }%>
+</main>
+<footer>
+    <div id="footerbox">
+        <div>© <%= new Date().getFullYear().toString()%> ShortenUrl - Tool to shorten a long link.</div>
+    </div>
+</footer>
+<script type="text/javascript" src="script.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</body>
+</html>

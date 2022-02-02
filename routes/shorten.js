@@ -1,15 +1,13 @@
 const express = require('express')
 const nanoid  = require('nanoid').nanoid
+const axios = require('axios')
 const Url = require("../database/schema")
 
 
 const router = express.Router();
 
 router.get("/", async (request, response) => {
-    return response.json({
-        completed: true,
-        message: "Request completed"
-    })
+    return response.render("home", {result: null, error: null})
 })
 
 router.get("/:urlId", async (request, response) => {
@@ -38,12 +36,14 @@ router.post("/", async (request, response) => {
     const baseUrl = "http://localhost:"+port
     const urlId = nanoid()
     const shortUrl = `${baseUrl}/${urlId}`
+    // return response.json(request.body)
     try {
         let url = await Url.findOne({ originalUrl })
         if (url) {
-            return response.json(url)
+            return response.render('home', {result: url.shortUrl, error: null})
         }
         else {
+            const check = await axios.get(originalUrl)
             url = new Url({
                 originalUrl,
                 shortUrl,
@@ -51,11 +51,12 @@ router.post("/", async (request, response) => {
                 date: new Date()
             })
             await url.save()
-            return response.send(url)
+            response.render('home', {result: shortUrl, error: null})
         }
     }
     catch (e) {
-        return response.status(500).json('Server Error:: '+ e.message);
+        response.render('home', {result: null, error: "An error occurred. Try again!"})
+
     }
 })
 
