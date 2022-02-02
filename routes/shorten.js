@@ -29,11 +29,12 @@ router.get("/:urlId", async (request, response) => {
 })
 
 router.post("/", async (request, response) => {
+    console.log(process.env)
     const {originalUrl} = request.body
     const base = process.env.BASE_URL
     const port = process.env.PORT
-    // const baseUrl = base+":"+port
-    const baseUrl = "http://localhost:"+port
+    const baseUrl = base+":"+port
+    // const baseUrl = "http://localhost:"+port
     const urlId = nanoid()
     const shortUrl = `${baseUrl}/${urlId}`
     // return response.json(request.body)
